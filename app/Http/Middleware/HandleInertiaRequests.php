@@ -37,6 +37,18 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'appName' => config('app.name'),
+            'flash' => function () use ($request) {
+                return [
+                    'success' => $request->session()->get('success'),
+                    'error' => $request->session()->get('error'),
+                ];
+            },
+            'baseUrl' => url('/'),
+            'backUrl' => url()->previous(),
+            'logoutUrl' => route('logout'),
+            'currentUrl' => url()->current(),
+            'homeUrl' => route('user.dashboard'),
+            'isHome' => $request->routeIs('user.dashboard'),
         ]);
     }
 }

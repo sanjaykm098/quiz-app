@@ -1,52 +1,30 @@
 <script setup>
-import { ref } from 'vue';
-import useVuelidate from '@vuelidate/core';
-import { required, email, minLength } from '@vuelidate/validators';
-import { Head } from '@inertiajs/vue3';
-import { Link } from '@inertiajs/vue3'
+import { ref, computed } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 
 // Reactive form data
-const form = ref({
-    email: '',
-    password: '',
+const form = useForm({
+    email: null,
+    password: null,
 });
 
-// Validation rules
-const rules = {
-    email: { required, email },
-    password: { required, minLength: minLength(6) },
+const baseUrl = usePage().props.baseUrl;
+
+// Access errors from Inertia props
+const errors = computed(() => usePage().props.errors || {});
+
+// Flash messages
+const flash = computed(() => usePage().props.flash || {});
+
+// Snackbar states
+const errorSnackbar = ref(!!flash.value.error);
+const successSnackbar = ref(!!flash.value.success);
+
+const submit = () => {
+    const url = `${baseUrl}/login`;
+    form.post(url);
 };
-
-// Initialize Vuelidate
-const v$ = useVuelidate(rules, form);
-
-// State variables
-const loading = ref(false);
-const snackbar = ref(false);
-const snackbarMessage = ref('');
-
-// Login function
-async function login() {
-    // Run validation
-    v$.value.$touch();
-    if (v$.value.$invalid) {
-        snackbarMessage.value = 'Please fix the errors before submitting.';
-        snackbar.value = true;
-        return;
-    }
-    try {
-        loading.value = true;
-        // Simulate API request
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        snackbarMessage.value = 'Login successful!';
-        snackbar.value = true;
-    } catch (error) {
-        snackbarMessage.value = 'An error occurred. Please try again.';
-        snackbar.value = true;
-    } finally {
-        loading.value = false;
-    }
-}
 </script>
 <style scoped>
 .bg-dark {
@@ -70,16 +48,13 @@ async function login() {
                                 </h2>
                             </v-card-title>
                             <v-card-text>
-                                <v-form @submit.prevent="login">
+                                <v-form @submit.prevent="submit">
                                     <!-- Email Field -->
                                     <v-text-field class="mb-4" v-model="form.email" variant="outlined" label="Email"
-                                        :error-messages="v$.email.$errors.map(e => e.$message)"
-                                        prepend-inner-icon="mdi-email" type="email"></v-text-field>
-
-                                    <!-- Password Field -->
+                                        :error-messages="errors?.email" prepend-inner-icon="mdi-email" type="email" />
                                     <v-text-field v-model="form.password" variant="outlined" label="Password"
-                                        :error-messages="v$.password.$errors.map(e => e.$message)"
-                                        prepend-inner-icon="mdi-lock" type="password"></v-text-field>
+                                        :error-messages="errors?.password" prepend-inner-icon="mdi-lock"
+                                        type="password" />
 
                                     <v-row class="mt-4">
                                         <v-col cols="12" sm="6">
@@ -91,7 +66,7 @@ async function login() {
                                         </v-col>
                                         <v-col cols="12" sm="6">
                                             <!-- Submit Button -->
-                                            <v-btn type="submit" :loading="loading" color="primary" block>
+                                            <v-btn type="submit" color="primary" block>
                                                 Login
                                             </v-btn>
                                         </v-col>
@@ -101,12 +76,21 @@ async function login() {
                         </v-card>
                     </v-col>
                 </v-row>
-
-                <!-- Snackbar for Feedback -->
-                <v-snackbar v-model="snackbar" timeout="3000" color="primary">
-                    {{ snackbarMessage }}
-                </v-snackbar>
             </v-container>
+            <v-snackbar v-model="successSnackbar" color="success" timeout="3000">
+                {{ flash.success }}
+                <template v-slot:actions>
+                    <v-btn variant="text" @click="successSnackbar = false">Close</v-btn>
+                </template>
+            </v-snackbar>
+
+            <!-- Error Snackbar -->
+            <v-snackbar v-model="errorSnackbar" color="error" timeout="3000">
+                {{ flash.error }}
+                <template v-slot:actions>
+                    <v-btn variant="text" @click="errorSnackbar = false">Close</v-btn>
+                </template>
+            </v-snackbar>
         </v-main>
     </v-app>
 </template>

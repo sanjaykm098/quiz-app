@@ -1,15 +1,29 @@
 <?php
 
+use App\Http\Controllers\Auth\User\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\QuizController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/login', function () {
-    return Inertia::render('Auth/Login');
+Route::middleware('guest')->group(function () {
+    Route::prefix('/login')->group(function () {
+        Route::get('/', [AuthController::class, 'loginPage'])->name('login');
+        Route::post('/', [AuthController::class, 'login'])->name('login');
+    });
+    Route::prefix('register')->group(function () {
+        Route::get('/', [AuthController::class, 'registerPage'])->name('register');
+        Route::post('/', [AuthController::class, 'register'])->name('register');
+    });
 });
-Route::get('/home', function () {
-    return Inertia::render('Home');
-})->name('user.dashboard');
-Route::get('/register', function () {
-    return Inertia::render('Auth/Register');
-});
+Route::get('/', function () {
+    return redirect()->route('login');
+})->name('welcome');
 
+
+Route::middleware('auth')->group(function () {
+    Route::get('home', HomeController::class)->name('user.dashboard');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/category/{uuid}', [CategoryController::class, 'show'])->name('category');
+    Route::get('/category/{uuid}/quiz/{level}', [QuizController::class, 'show'])->name('quiz');
+});

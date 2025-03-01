@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
 {
@@ -23,7 +24,25 @@ class RegisterRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'password' => 'required|min:8|max:20'
+            'password' => [
+                Password::min(8)->mixedCase()->letters()->numbers()->symbols(),
+                'required',
+            ],
+            'name' => ['required', 'string', 'max:255'],
+            'terms' => ['required', 'accepted'],
+        ];
+    }
+
+    /**
+     * Get the validation messages that apply to the request.
+     *
+     * @return array<string, string>
+     */
+
+    public function messages(): array
+    {
+        return [
+            'terms.required' => 'You must agree to the terms and conditions',
         ];
     }
 }
