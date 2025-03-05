@@ -101,8 +101,6 @@ class QuizController extends Controller
                     'is_correct' => $category->questions()->where('id', $question)->firstOrFail()->correct_option == $request->selectedAnswer,
                 ]
             );
-
-
             $quiz->update(['current_question' => $questionIndex]);
         }
         $quizResult = QuizAnswerRecord::where('quiz_record_id', $quiz->id)->with('quizRecord', 'question')->get();
@@ -139,5 +137,17 @@ class QuizController extends Controller
         $quiz->update(['current_question' => $questionIndex]);
 
         return redirect()->route('quiz.play', ['uuid' => $uuid, 'level' => $level, 'quiz' => $quiz->id, 'question' => $questionIndex + 1]);
+    }
+
+    public function allResults()
+    {
+        $quizResults = QuizRecord::where('user_id', Auth::id())->latest()->with('category')->get();
+        foreach ($quizResults as $quizResult) {
+            $quizResult->correct = QuizAnswerRecord::where('quiz_record_id', $quizResult->id)->where('is_correct', true)->count();
+            $quizResult->wrong = QuizAnswerRecord::where('quiz_record_id', $quizResult->id)->where('is_correct', false)->count();
+            $quizResult->total = $quizResult->correct + $quizResult->wrong;
+            $quizResult->score = number_format(($quizResult->correct / $quizResult->total) * 100, 2);
+        }
+        return Inertia::render('Quiz/AllResults', compact('quizResults'));
     }
 }

@@ -33,4 +33,6 @@ Route::middleware('auth')->group(function () {
         QuizController::class,
         'result'
     ])->name('quiz.result');
+
+    Route::get('/all-results', [QuizController::class, 'allResults'])->name('all.results');
 });

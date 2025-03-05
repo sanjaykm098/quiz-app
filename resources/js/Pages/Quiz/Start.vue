@@ -15,7 +15,7 @@ const category = computed(() => usePage().props.category || {});
     </Head>
 
     <v-app>
-        <AppBar :disabled="true" />
+        <AppBar />
         <v-main class="d-flex align-center justify-center">
             <v-container>
                 <v-row justify="center">

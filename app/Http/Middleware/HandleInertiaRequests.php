@@ -37,6 +37,14 @@ class HandleInertiaRequests extends Middleware
     {
         return array_merge(parent::share($request), [
             'appName' => config('app.name'),
+            'user' => fn() => $request->user()
+                ? $request->user()->only('id', 'name', 'email')
+                : null,
+            'profile_routes' => [
+                'dashboard' => route('user.dashboard'),
+                'all_results' => route('all.results'),
+                'logout' => route('logout'),
+            ],
             'flash' => function () use ($request) {
                 return [
                     'success' => $request->session()->get('success'),
@@ -45,7 +53,6 @@ class HandleInertiaRequests extends Middleware
             },
             'baseUrl' => url('/'),
             'backUrl' => url()->previous(),
-            'logoutUrl' => route('logout'),
             'currentUrl' => url()->current(),
             'homeUrl' => route('user.dashboard'),
             'isBackUrl' => url()->previous() !== url()->current()
