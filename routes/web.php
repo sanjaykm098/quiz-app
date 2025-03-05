@@ -26,4 +26,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/category/{uuid}', [CategoryController::class, 'show'])->name('category');
     Route::get('/category/{uuid}/quiz/{level}', [QuizController::class, 'show'])->name('quiz');
+    Route::post('/category/{uuid}/quiz/{level}', [QuizController::class, 'start'])->name('quiz');
+    Route::get('/category/{uuid}/quiz/{level}/play/{quiz}/question/{question}', [QuizController::class, 'play'])->name('quiz.play');
+    Route::put('/category/{uuid}/quiz/{level}/play/{quiz}/question/{question}', [QuizController::class, 'store'])->name('quiz.play');
+    Route::match(['get', 'put'], '/category/{uuid}/quiz/{level}/play/{quiz}/question/{question}/result', [
+        QuizController::class,
+        'result'
+    ])->name('quiz.result');
 });

@@ -48,7 +48,9 @@ class HandleInertiaRequests extends Middleware
             'logoutUrl' => route('logout'),
             'currentUrl' => url()->current(),
             'homeUrl' => route('user.dashboard'),
-            'isHome' => $request->routeIs('user.dashboard'),
+            'isBackUrl' => url()->previous() !== url()->current()
+                && url()->previous() !== url()->full()
+                && url()->previous() !== route('user.dashboard'),
         ]);
     }
 }
