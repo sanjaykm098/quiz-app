@@ -128,6 +128,37 @@ CREATE TABLE `questions` (
   CONSTRAINT `questions_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `quiz_answer_records`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `quiz_answer_records` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `quiz_record_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `question_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `option` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_correct` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `quiz_records`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `quiz_records` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `question_ids` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `current_question` int NOT NULL DEFAULT '1',
+  `category_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `level` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `no_of_questions` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `time` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -221,3 +252,5 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (5,'2025_01_16_1555
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (6,'2025_01_16_155704_create_wallet_transactions_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (7,'2025_01_22_150001_create_categories_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (8,'2025_01_22_150005_create_questions_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (9,'2025_03_03_174405_create_quiz_records_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (10,'2025_03_03_185834_create_quiz_answer_records_table',3);
