@@ -17,8 +17,8 @@
                         <v-card class="mx-auto" :subtitle="'Time: ' + type.time + ' | Question: ' + type.no_of_que"
                             width="400">
                             <template v-slot:title>
-                                <span class="font-weight-black">
-                                    {{ type.name }}
+                                <span class="font-weight-black text-capitalize">
+                                    {{ type.name }} - {{ type.difficulty }}
                                 </span>
                             </template>
 

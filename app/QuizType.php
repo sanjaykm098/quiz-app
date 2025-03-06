@@ -14,6 +14,7 @@ class QuizType
     {
         static::$Beginner = [
             'name' => 'Beginner',
+            'difficulty' => 'easy',
             'description' => 'This is a beginner quiz',
             'no_of_que' => 6,
             'time' => "1 min 30 sec",
@@ -22,6 +23,7 @@ class QuizType
         ];
         static::$Intermediate = [
             'name' => 'Intermediate',
+            'difficulty' => 'medium',
             'description' => 'This is an intermediate quiz',
             'no_of_que' => 10,
             'time' => "2 min 30 sec",
@@ -30,6 +32,7 @@ class QuizType
         ];
         static::$Advanced = [
             'name' => 'Advanced',
+            'difficulty' => 'hard',
             'description' => 'This is an advanced quiz',
             'no_of_que' => 15,
             'time' => "3 min 30 sec",
@@ -38,6 +41,7 @@ class QuizType
         ];
         static::$Expert = [
             'name' => 'Expert',
+            'difficulty' => 'hard',
             'description' => 'This is an expert quiz',
             'no_of_que' => 20,
             'time' => "5 min",
@@ -46,6 +50,7 @@ class QuizType
         ];
         static::$Master = [
             'name' => 'Master',
+            'difficulty' => 'hard',
             'description' => 'This is a master quiz',
             'no_of_que' => 25,
             'time' => "10 min",

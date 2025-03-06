@@ -34,8 +34,10 @@ class QuizController extends Controller
         $category = Category::where('id', $id)->firstOrFail();
         $category->uuid = $uuid;
 
-        $questions = $category->questions()->inRandomOrder()->limit($quizType['no_of_que'])->get();
-
+        $questions = $category->questions()->where('difficulty', $quizType['difficulty'])->inRandomOrder()->limit($quizType['no_of_que'])->get();
+        if ($questions->count() < $quizType['no_of_que']) {
+            $questions = $category->questions()->inRandomOrder()->limit($quizType['no_of_que'])->get();
+        }
         $quiz = QuizRecord::create(
             [
                 'user_id' => Auth::id(),
@@ -93,12 +95,14 @@ class QuizController extends Controller
             ]);
             $question = $quiz->question_ids[$questionIndex - 1];
 
-            QuizAnswerRecord::create(
+            QuizAnswerRecord::updateOrCreate(
                 [
                     'quiz_record_id' => $quiz->id,
                     'question_id' => $question,
+                ],
+                [
                     'option' => $request->selectedAnswer,
-                    'is_correct' => $category->questions()->where('id', $question)->firstOrFail()->correct_option == $request->selectedAnswer,
+                    'is_correct' => $category->questions()->where('id', $question)->firstOrFail()->answer == $request->selectedAnswer,
                 ]
             );
             $quiz->update(['current_question' => $questionIndex]);
@@ -125,12 +129,14 @@ class QuizController extends Controller
         $quiz = QuizRecord::where('id', $quiz)->where('user_id', Auth::id())->firstOrFail();
         $question = $quiz->question_ids[$questionIndex - 1];
 
-        QuizAnswerRecord::create(
+        QuizAnswerRecord::updateOrCreate(
             [
                 'quiz_record_id' => $quiz->id,
                 'question_id' => $question,
+            ],
+            [
                 'option' => $request->selectedAnswer,
-                'is_correct' => $category->questions()->where('id', $question)->firstOrFail()->correct_option == $request->selectedAnswer,
+                'is_correct' => $category->questions()->where('id', $question)->firstOrFail()->answer == $request->selectedAnswer,
             ]
         );
 
